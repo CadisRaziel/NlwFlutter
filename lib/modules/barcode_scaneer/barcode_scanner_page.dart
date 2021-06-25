@@ -54,7 +54,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
               ///caso ele pode exibir a camera retornarmos um container
               if (status.showCamera) {
                 return Container(
-                  child: status.cameraController!.buildPreview(),
+                  child: controller.cameraController!.buildPreview(),
                 );
               } else {
                 return Container();
@@ -106,7 +106,9 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
                 ),
                 bottomNavigationBar: SetLabelButtons(
                   primaryLabel: "Inserir código do boleto",
-                  primaryOnPressed: () {},
+                  primaryOnPressed: () {
+                    Navigator.pushReplacementNamed(context, "insert_boleto");
+                  },
                   secundaryLabel: "Adicionar da geleria",
                   secundaryOnPressed: () {},
                 )),
@@ -125,10 +127,12 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
                       "Tente escanear novamente ou digite o código do seu boleto",
                   primaryLabel: "Escanear novamente",
                   primaryOnPressed: () {
-                    controller.getAvailableCamreas();
+                    controller.scanWithCamera();
                   },
                   secundaryLabel: "Digitar código",
-                  secundaryOnPressed: () {},
+                  secundaryOnPressed: () {
+                    Navigator.pushReplacementNamed(context, "insert_boleto");
+                  },
                 );
               } else {
                 return Container();

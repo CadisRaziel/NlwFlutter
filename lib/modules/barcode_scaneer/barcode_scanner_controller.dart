@@ -7,7 +7,8 @@ import 'package:payflow/modules/barcode_scaneer/barcode_status.dart';
 
 class BarcodeScannerController {
   ///criando a gerencia de estado com valueNotificer evitamos o setState nas outras telas
-  final statusNotifier = ValueNotifier<BarcodeScannerStatus>(BarcodeScannerStatus());
+  final statusNotifier =
+      ValueNotifier<BarcodeScannerStatus>(BarcodeScannerStatus());
 
   ///quando criamos um ValueNotifier que nem acima, precisamos criar um get e set !
   BarcodeScannerStatus get status => statusNotifier.value;
@@ -15,6 +16,11 @@ class BarcodeScannerController {
 
   ///essa variavel final tem no package do Google_ml_kit
   final barcodeScanner = GoogleMlKit.vision.barcodeScanner();
+
+  InputImage? imagePicker;
+
+  ///Variavel que vai fazer o controller da nossa camera ou seja, para podermos acessar os recursos da camera
+  CameraController? cameraController;
 
   ///verificando se o celular tem cameras disponiveis
   ///porque isso? as vezes ele ta usando a camera em outro app
@@ -29,18 +35,14 @@ class BarcodeScannerController {
           (element) => element.lensDirection == CameraLensDirection.back);
 
       ///vamos instanciar a cameraController para que a camera esteja em resolução maxima e sem audio !
-      final cameraController =
+      cameraController =
           CameraController(camera, ResolutionPreset.max, enableAudio: false);
 
       ///Para inicializar a camera
-      await cameraController.initialize();
+      await cameraController!.initialize();
 
-      ///tivemos que instanciar a classe BarcodeScannerStatus la em cima pois:
-      ///tinhamos que colocar o cameraController dentro do facotry criado la
-      ///e nao podiamos criar uma 'final' aqui pois ela sempre é reatribuida
-      ///repare na utilização do factory criado em BarcodeScannerStatus!!!!
-      status = BarcodeScannerStatus.available(cameraController);
       scanWithCamera();
+      listenCamera();
     } catch (e) {
       ///repare na utilização do factory criado em BarcodeScannerStatus!!!!
       status = BarcodeScannerStatus.error(e.toString());
@@ -49,9 +51,6 @@ class BarcodeScannerController {
 
   ///função para pegar imagens da galeria com o package ImagePicker
   void scanWithImagePicker() async {
-    ///ele vai parar a camera
-    await status.cameraController!.stopImageStream();
-
     ///vai esperar a imagem vinda da galeria
     final response = await ImagePicker().getImage(source: ImageSource.gallery);
     final inputImage = InputImage.fromFilePath(response!.path);
@@ -60,60 +59,42 @@ class BarcodeScannerController {
     scannerBarCode(inputImage);
   }
 
-  void scanWithCamera(){
-    ///se em 10 segundos não lemos a imagem
-    Future.delayed(Duration(seconds: 10)).then((value) {
-      if(status.cameraController != null) {
+  void scanWithCamera() {
+    ///tivemos que instanciar a classe BarcodeScannerStatus la em cima pois:
+    ///tinhamos que colocar o cameraController dentro do facotry criado la
+    ///e nao podiamos criar uma 'final' aqui pois ela sempre é reatribuida
+    ///repare na utilização do factory criado em BarcodeScannerStatus!!!!
+    status = BarcodeScannerStatus.available();
 
-        ///se em 10 segundos nao leu a imagem ele para a camera
-        if(status.cameraController!.value.isStreamingImages)
-          status.cameraController!.stopImageStream();
-      }
-      status = BarcodeScannerStatus.error('Timeout da leitura de boleto');
+    Future.delayed(Duration(seconds: 20)).then((value) {
+      if (status.hasBarcode == false)
+        status = BarcodeScannerStatus.error('Timeout da leitura de boleto');
     });
-
-    ///e com isso ele fica chamando essa função para ficar ouvindo a imagem
-    listenCamera();
   }
-
 
   Future<void> scannerBarCode(InputImage inputImage) async {
     try {
-
-      ///se o cameraController for diferente de nulo
-      if(status.cameraController != null){
-        ///e se o cameraController estiver lendo a imagem e encontrar o barcode
-        ///ele vai parar a camera para fazer a leitura do barcode e direcionar nós para outra tela
-        if(status.cameraController!.value.isStreamingImages)
-          status.cameraController!.stopImageStream();
-      }
-
       ///processamneto da imagem
       final barcodes = await barcodeScanner.processImage(inputImage);
 
       ///se ele achar o barcode apos processar a imagem
       ///o for ele vai retornar varias listas de barcode que ele encontrou
       var barcode;
-      for(Barcode item in barcodes){
+      for (Barcode item in barcodes) {
         barcode = item.value.displayValue;
       }
 
       ///se o barcode for diferente de nulo e ele estiver vazio quer dizer que podemos atualizar o status dele
-      if(barcode != null && status.barcode.isEmpty){
+      if (barcode != null && status.barcode.isEmpty) {
         status = BarcodeScannerStatus.barcode(barcode);
 
-        if(status.cameraController != null)
-
         ///e depois vamos fechar a camera pois vamos navegar para outra tela
-        status.cameraController!.dispose();
-      } else {
-        ///se nao a gente chama essa função novamente para ele tentar ler o codigo de barras denovo
-        getAvailableCamreas();
+        cameraController!.dispose();
+
+        await barcodeScanner.close();
       }
 
       return;
-
-      
     } catch (e) {
       print('ERRO DA LEITURA $e');
     }
@@ -126,74 +107,74 @@ class BarcodeScannerController {
     ///todo o codigo criado dentro dessa função esta na doc do google_ml_kit = https://pub.dev/packages/google_ml_kit
     ///esta igualzinho la
     ///lembrando isso é Machine Learning
-    
-    if(status.cameraController != null)
 
     ///sempre que criamos o cameraController nos conseguimos verificar se tem alguem ouvindo essa imagem
-    if (status.cameraController!.value.isStreamingImages == false)
+    if (cameraController!.value.isStreamingImages == false)
 
       ///se nao tiver ninguem ouvindo essa imagem nós vamos startar o cameraImage
-      status.cameraController!.startImageStream((cameraImage) async {
-        try {
-          final WriteBuffer allBytes = WriteBuffer();
-          for (Plane plane in cameraImage.planes) {
-            ///vai criando um array de byte
-            allBytes.putUint8List(plane.bytes);
+      cameraController!.startImageStream((cameraImage) async {
+        if (status.stopScanner == false) {
+          try {
+            final WriteBuffer allBytes = WriteBuffer();
+            for (Plane plane in cameraImage.planes) {
+              ///vai criando um array de byte
+              allBytes.putUint8List(plane.bytes);
+            }
+
+            ///transforma em bytes
+            final bytes = allBytes.done().buffer.asUint8List();
+
+            ///tamanho da imagem
+            final Size imageSize = Size(
+                cameraImage.width.toDouble(), cameraImage.height.toDouble());
+
+            ///rotação que a imagem esta
+            final InputImageRotation imageRotation =
+                InputImageRotation.Rotation_0deg;
+
+            ///tenta formatar em raw e nao conseguir usa o NV21
+            final InputImageFormat inputImageFormat =
+                InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ??
+                    InputImageFormat.NV21;
+
+            ///transforma o planeData em uma lista
+            final planeData = cameraImage.planes.map(
+              (Plane plane) {
+                return InputImagePlaneMetadata(
+                    bytesPerRow: plane.bytesPerRow,
+                    height: plane.height,
+                    width: plane.width);
+              },
+            ).toList();
+
+            final inputeImageData = InputImageData(
+                size: imageSize,
+                imageRotation: imageRotation,
+                inputImageFormat: inputImageFormat,
+                planeData: planeData);
+
+            final inputImageCamera = InputImage.fromBytes(
+                bytes: bytes, inputImageData: inputeImageData);
+
+            ///colocamos um delay para chamar a proxima função scannerBarCode
+            await Future.delayed(Duration(seconds: 3));
+
+            scannerBarCode(inputImageCamera);
+          } catch (e) {
+            print(e);
           }
-
-          ///transforma em bytes
-          final bytes = allBytes.done().buffer.asUint8List();
-
-          ///tamanho da imagem
-          final Size imageSize =
-              Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
-
-          ///rotação que a imagem esta
-          final InputImageRotation imageRotation =
-              InputImageRotation.Rotation_0deg;
-
-          ///tenta formatar em raw e nao conseguir usa o NV21
-          final InputImageFormat inputImageFormat =
-              InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ??
-                  InputImageFormat.NV21;
-
-          ///transforma o planeData em uma lista
-          final planeData = cameraImage.planes.map(
-            (Plane plane) {
-              return InputImagePlaneMetadata(
-                  bytesPerRow: plane.bytesPerRow,
-                  height: plane.height,
-                  width: plane.width);
-            },
-          ).toList();
-
-          final inputeImageData = InputImageData(
-              size: imageSize,
-              imageRotation: imageRotation,
-              inputImageFormat: inputImageFormat,
-              planeData: planeData);
-
-          final inputImageCamera = InputImage.fromBytes(
-              bytes: bytes, inputImageData: inputeImageData);
-
-          ///colocamos um delay para chamar a proxima função scannerBarCode
-          await Future.delayed(Duration(seconds: 3));
-
-          await scannerBarCode(inputImageCamera);
-        } catch (e) {
-          print(e);
         }
       });
   }
 
-  void dispose(){
+  void dispose() {
     ///vai fechar tudo que abrimos
     statusNotifier.dispose();
     barcodeScanner.close();
 
     ///verifica se a camera ta aberta e fecha ela
-    if(status.showCamera){
-      status.cameraController!.dispose();
+    if (status.showCamera) {
+      cameraController!.dispose();
     }
   }
 }
