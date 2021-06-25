@@ -4,6 +4,7 @@ import 'package:payflow/modules/barcode_scaneer/barcode_status.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
 import 'package:payflow/shared/themes/app_text_style.dart';
 import 'package:payflow/shared/widgets/BottonNAV_Widget_buttons_scannerPage/set_label_buttons.dart';
+import 'package:payflow/shared/widgets/bottom_sheet_alert/bottom_alert_scannerPage.dart';
 
 class BarcodeScannerPage extends StatefulWidget {
   const BarcodeScannerPage({Key? key}) : super(key: key);
@@ -19,6 +20,11 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   void initState() {
     ///Anets de renderizar qualqeur coisa na tela ele vai chamar as cameras
     controller.getAvailableCamreas();
+    controller.statusNotifier.addListener(() {
+      if(controller.status.hasBarcode) {
+        Navigator.pushReplacementNamed(context, "insert_boleto");
+      }
+    });
     super.initState();
   }
 
@@ -30,16 +36,6 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
 
   @override
   Widget build(BuildContext context) {
-    ///codigo criado para criar a tela BottomSheetWidget
-    // return BottomSheetWidget(
-    //   title: "Não foi possivel idenfiticar um código de barras.",
-    //   subTitle: "Tente escanear novamente ou digite o código do seu boleto",
-    //   primaryLabel: "Escanear novamente",
-    //   primaryOnPressed: (){},
-    //   secundaryLabel: "Digitar código",
-    //   secundaryOnPressed: (){},
-    // );
-
     ///SafeAre para evitar que ele fique em cima do icone de bateria, notificação, hora, nas bordas e nos botóes de celulares antigos
     return SafeArea(
       top: true,
@@ -74,7 +70,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
           RotatedBox(
             quarterTurns: 1,
             child: Scaffold(
-              backgroundColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
                 appBar: AppBar(
                   backgroundColor: Colors.black,
                   title: Text(
@@ -114,6 +110,30 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
                   secundaryLabel: "Adicionar da geleria",
                   secundaryOnPressed: () {},
                 )),
+          ),
+
+          ///aqui vamos renderizar a tela que criamos caso der erro com os dois botoes "escanear novamente" e "digitar codigo"
+          ///isso com o valueNotifier
+          ValueListenableBuilder<BarcodeScannerStatus>(
+            valueListenable: controller.statusNotifier,
+            builder: (_, status, __) {
+              ///caso ele pode exibir a camera retornarmos um container
+              if (status.hasError) {
+                return BottomSheetWidget(
+                  title: "Não foi possivel idenfiticar um código de barras.",
+                  subTitle:
+                      "Tente escanear novamente ou digite o código do seu boleto",
+                  primaryLabel: "Escanear novamente",
+                  primaryOnPressed: () {
+                    controller.getAvailableCamreas();
+                  },
+                  secundaryLabel: "Digitar código",
+                  secundaryOnPressed: () {},
+                );
+              } else {
+                return Container();
+              }
+            },
           ),
         ],
       ),

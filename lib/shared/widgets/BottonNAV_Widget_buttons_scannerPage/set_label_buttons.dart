@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/shared/themes/app_colors.dart';
 import 'package:payflow/shared/themes/app_text_style.dart';
 
 import 'package:payflow/shared/widgets/Divider_vertical_entre_buttons/divider_vertical.dart';
@@ -25,6 +26,7 @@ class SetLabelButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: AppColors.shape,
       ///Envolvemos os botões em um Container para que o DividerEntreButtonsWidget não ocupe a tela toda !!
       height: 56,
       child: Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:payflow/modules/barcode_scaneer/barcode_scanner_page.dart';
 import 'package:payflow/modules/home/home_page.dart';
+import 'package:payflow/modules/insert_boleto/boleto_de_mentira.dart';
 import 'package:payflow/modules/login/login_page.dart';
 import 'package:payflow/modules/splash/spash_page.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
@@ -12,12 +13,12 @@ class AppWidget extends StatelessWidget {
   ///e isso pode dar bug, travar o celular
   ///com essa opção abaixo ao clicar no botão para scanner ele ja vai abrir a tela deitada com o layout pronto
   ///ou seja os Widget's que tem o RotatedBox sera afetado por esse constructor !
-  AppWidget() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.portraitUp,
-    ]);    
-  }
+  // AppWidget() {
+  //   SystemChrome.setPreferredOrientations([
+  //     DeviceOrientation.portraitDown,
+  //     DeviceOrientation.portraitUp,
+  //   ]);    
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,7 @@ class AppWidget extends StatelessWidget {
         "/home": (context) => HomePage(),
         "/login": (context) => LoginPage(),
         "/barcode_scanner": (context) => BarcodeScannerPage(),
+        "/insert_boleto": (context) => InsertBoletoPage(),
       },
     );
   }

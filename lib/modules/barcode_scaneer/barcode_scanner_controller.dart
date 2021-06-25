@@ -102,6 +102,8 @@ class BarcodeScannerController {
       if(barcode != null && status.barcode.isEmpty){
         status = BarcodeScannerStatus.barcode(barcode);
 
+        if(status.cameraController != null)
+
         ///e depois vamos fechar a camera pois vamos navegar para outra tela
         status.cameraController!.dispose();
       } else {
@@ -124,6 +126,8 @@ class BarcodeScannerController {
     ///todo o codigo criado dentro dessa função esta na doc do google_ml_kit = https://pub.dev/packages/google_ml_kit
     ///esta igualzinho la
     ///lembrando isso é Machine Learning
+    
+    if(status.cameraController != null)
 
     ///sempre que criamos o cameraController nos conseguimos verificar se tem alguem ouvindo essa imagem
     if (status.cameraController!.value.isStreamingImages == false)
