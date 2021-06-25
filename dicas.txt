@@ -1,0 +1,15 @@
+sempre que pegar um projeto do figma ou outro editor
+Faça primeiro a pasta de themas,
+a pasta de cores, de fonts, de imagens etc... ja deixe separada
+
+
+///Repare no seguinte: Estamos separando as telas com a pasta Modules
+Modules é uma estrutura de projetos, porém aqui vamos ver só o superficial
+
+
+para pegar o Hashcode para por no firebase
+va no terminal e digite: cd android
+logo em seguida digite: ./gradlew signingReport
+
+
+image_picker -> package para pegar as fotos da galeria do celular
