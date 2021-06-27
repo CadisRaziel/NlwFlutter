@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:payflow/core/App_widget.dart';
 
+
+/* 
+WidgetsFlutterBinding.ensureInitialized(); ->
+Se você estiver executando um aplicativo e precisar acessar o mensageiro binário antes de runApp() 
+ser chamado (por exemplo, durante a inicialização do plug-in),
+será necessário chamar explicitamente o WidgetsFlutterBinding.ensureInitialized()primeiro.
+*/
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIOverlays([]);
+  WidgetsFlutterBinding.ensureInitialized();  
   runApp(AppFirebase());
 }
 
