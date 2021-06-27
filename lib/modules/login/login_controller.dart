@@ -9,6 +9,7 @@ import 'package:payflow/shared/models/user_model.dart';
 ///ele vai verificar o login do usuario la no firebase
 class LoginController {
   final authController = AuthController();
+ 
 
   GoogleSignIn _google = GoogleSignIn(
     scopes: [
