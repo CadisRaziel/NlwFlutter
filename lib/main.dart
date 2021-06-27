@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:payflow/core/App_widget.dart';
 
 void main() {
-  runApp(AppWidget());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIOverlays([]);
+  runApp(AppFirebase());
 }
 
 ///Classe para inicializar o firebase
