@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:payflow/modules/barcode_scaneer/barcode_scanner_page.dart';
 import 'package:payflow/modules/home/home_page.dart';
 import 'package:payflow/modules/insert_boleto/insert_boleto.dart';
+import 'package:payflow/modules/login/login_controller.dart';
 import 'package:payflow/modules/login/login_page.dart';
 import 'package:payflow/modules/splash/spash_page.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
@@ -18,7 +19,9 @@ class AppWidget extends StatelessWidget {
   //     DeviceOrientation.portraitDown,
   //     DeviceOrientation.portraitUp,
   //   ]);    
-  // }
+  // }]
+
+  final controller = LoginController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,7 @@ class AppWidget extends StatelessWidget {
       routes: {
         "/splash": (context) => SplashPage(),
         "/home": (context) => HomePage(),
-        "/login": (context) => LoginPage(),
+        "/login": (context) => LoginPage(controller: controller,),
         "/barcode_scanner": (context) => BarcodeScannerPage(),
         "/insert_boleto": (context) => InsertBoletoPage(),
       },

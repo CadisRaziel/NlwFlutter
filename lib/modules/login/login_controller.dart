@@ -1,4 +1,6 @@
+import 'package:firebase_auth_oauth/firebase_auth_oauth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:payflow/shared/auth/auth_controller.dart';
 import 'package:payflow/shared/models/user_model.dart';
@@ -9,8 +11,7 @@ import 'package:payflow/shared/models/user_model.dart';
 ///ele vai verificar o login do usuario la no firebase
 class LoginController {
   final authController = AuthController();
- 
-
+  final githubController = FirebaseAuthOAuth();
   GoogleSignIn _google = GoogleSignIn(
     scopes: [
       "email",
@@ -30,7 +31,6 @@ class LoginController {
     }
   }
 
-  ///implementando logout <primeiro coloquei no auth_controller a função logOut()>
   Future<void> googleLogOut(BuildContext context) async {
     try {
       await _google.signOut();
@@ -40,5 +40,23 @@ class LoginController {
       print(e);
     }
   }
+
+  Future<void> githubLogin(BuildContext context) async {
+    try {
+      var response = await githubController.openSignInFlow(
+        "github.com",
+        ["user:email"],
+        {"lang": "br"},
+      );
+      final user = UserModel(
+        name: response!.email!.substring(0, response.email!.length - 10),
+        photoURL: response.photoURL,
+      );
+      authController.setUser(context, user);
+    } on PlatformException catch (error) {
+      debugPrint("${error.code}: ${error.message}");
+    }
+  }
 }
+
 ///Observação importante: vale ressaltar que não estamos fazendo login no FIREBASE e sim usando o FIREBASE como uma ponte para o login google

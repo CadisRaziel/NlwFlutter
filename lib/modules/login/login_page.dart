@@ -1,5 +1,7 @@
 import 'package:animated_card/animated_card.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:payflow/modules/login/login_controller.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
 import 'package:payflow/shared/themes/app_images.dart';
@@ -7,8 +9,13 @@ import 'package:payflow/shared/themes/app_text_style.dart';
 import 'package:payflow/shared/widgets/loginButton/social_login_button.dart';
 
 ///Estamos fazendo essa tela de login com statefull pois teremos que gerenciar o botão do google
+
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final LoginController controller;
+  const LoginPage({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -44,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
 
             ///Vamos usar o positioned para alinhar a imagem person no centro da tela
             Positioned(
-                top: 130,
+                top: 100,
                 left: 0,
                 right: 0,
                 child: Image.asset(
@@ -54,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                 )),
             Positioned(
               ///utilizamos o bottom assim para ela se adequar nas telas de outros celulares
-              bottom: size.height * 0.13,
+              bottom: size.height * 0.07,
 
               ///Coloque left e right 0 quando for trabalhar com mainAxis e crossAxis que nem abaixo
               left: 0,
@@ -80,18 +87,33 @@ class _LoginPageState extends State<LoginPage> {
                   ///ao iniciar a tela ele vai ter um efeito de caindo
                   ///e com isso ele nao vai ser mais aquele botao statico de quando abre a tela ele ta la parado
                   AnimatedCard(
-                    direction: AnimatedCardDirection.top,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 40, right: 40, top: 50),
-                      child: SocialLoginButton(
-                        ///e aqui no evento de clique colocamos a final controller com o metodo criado na classe LoginController
-                        onTap: () {
-                          controller.googleSignIn(context);
-                        },
-                      ),
-                    ),
-                  ),
+                          direction: AnimatedCardDirection.left,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 40, top: 40),
+                            child: SocialLoginButton(
+                              image: AppImages.google,
+                              text: "Entrar com Google",
+                              onTap: () {
+                                widget.controller.googleSignIn(context);
+                              },
+                            ),
+                          ),
+                        ),
+                        AnimatedCard(
+                          direction: AnimatedCardDirection.right,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 40, top: 20, bottom: 20),
+                            child: SocialLoginButton(
+                              icon: FontAwesomeIcons.github,
+                              text: "Entrar com GitHub",
+                              onTap: () {
+                                widget.controller.githubLogin(context);
+                              },
+                            ),
+                          ),
+                        ),
                 ],
               ),
             )
