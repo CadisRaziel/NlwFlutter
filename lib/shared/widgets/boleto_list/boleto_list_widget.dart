@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+
 import 'package:payflow/shared/models/boleto_model.dart';
 import 'package:payflow/shared/widgets/boleto_list/bolleto_list_controller.dart';
 import 'package:payflow/shared/widgets/boleto_tile/boleto_tile_widget.dart';
 
 class BoletoListWideget extends StatefulWidget {
-  const BoletoListWideget({Key? key}) : super(key: key);
+  final BoletoListController controller;
+  BoletoListWideget({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   _BoletoListWidegetState createState() => _BoletoListWidegetState();
 }
 
 class _BoletoListWidegetState extends State<BoletoListWideget> {
-  final controller = BoletoListController();
-
   ///com o código abaixo teremos nosso boletos carregados automaticamente
 
   @override
@@ -20,9 +23,9 @@ class _BoletoListWidegetState extends State<BoletoListWideget> {
     ///depois de realizar o controller e fazer um ValueNotifier la dentro
     ///precisamos colocar o ValueListenableBuilder para ele ouvir aquele valueNotifier
     return ValueListenableBuilder<List<BoletoModel>>(
-      valueListenable: controller.boletosNotifier,
-      builder: (context, boletos, widget) => Column(
-        children: controller.boletos
+      valueListenable: widget.controller.boletosNotifier,
+      builder: (context, boletos,__) => Column(
+        children: boletos
             .map((boletinhos) => BoletoTileWidget(data: boletinhos))
             .toList(),
       ),

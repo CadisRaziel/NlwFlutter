@@ -1,3 +1,4 @@
+import 'package:animated_card/animated_card.dart';
 import 'package:flutter/material.dart';
 
 import 'package:payflow/shared/themes/app_colors.dart';
@@ -24,46 +25,49 @@ class InputTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        children: [
-          TextFormField(
-            initialValue: initialValue,
-            controller: controller,
-            onChanged: onChanged,
-            style: TextStyles.input,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              labelText: label,
-              labelStyle: TextStyles.input,
-              icon: Row(
-                ///mainAxisSize = vai fazer com que fique aquela barra piscando para digitar
-                ///e tambem para o texto aparecer no inicio
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Icon(icon, color: AppColors.primary,),
-                  ),
+    return AnimatedCard(
+      direction: AnimatedCardDirection.left,
+          child: Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          children: [
+            TextFormField(
+              initialValue: initialValue,
+              controller: controller,
+              onChanged: onChanged,
+              style: TextStyles.input,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                labelText: label,
+                labelStyle: TextStyles.input,
+                icon: Row(
+                  ///mainAxisSize = vai fazer com que fique aquela barra piscando para digitar
+                  ///e tambem para o texto aparecer no inicio
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      child: Icon(icon, color: AppColors.primary,),
+                    ),
 
-                  ///esse container vai ter aquela barra cinza logo depois do icone, separando icone do texto
-                  Container(
-                    width: 1,
-                    height: 48,
-                    color: AppColors.stroke,
-                  )
-                ],
+                    ///esse container vai ter aquela barra cinza logo depois do icone, separando icone do texto
+                    Container(
+                      width: 1,
+                      height: 48,
+                      color: AppColors.stroke,
+                    )
+                  ],
+                ),
+                border: InputBorder.none,
               ),
-              border: InputBorder.none,
             ),
-          ),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.stroke,
-          )
-        ],
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: AppColors.stroke,
+            )
+          ],
+        ),
       ),
     );
   }

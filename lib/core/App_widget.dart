@@ -6,6 +6,7 @@ import 'package:payflow/modules/insert_boleto/insert_boleto.dart';
 import 'package:payflow/modules/login/login_controller.dart';
 import 'package:payflow/modules/login/login_page.dart';
 import 'package:payflow/modules/splash/spash_page.dart';
+import 'package:payflow/shared/models/user_model.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
 
 class AppWidget extends StatelessWidget {
@@ -18,7 +19,7 @@ class AppWidget extends StatelessWidget {
   //   SystemChrome.setPreferredOrientations([
   //     DeviceOrientation.portraitDown,
   //     DeviceOrientation.portraitUp,
-  //   ]);    
+  //   ]);
   // }]
 
   final controller = LoginController();
@@ -39,11 +40,19 @@ class AppWidget extends StatelessWidget {
       ///Rotas nomeadas
       initialRoute: "/splash",
       routes: {
+        ///user: ModalRoute.of(context)!.settings.arguments as UserModel) quando o usaurio fizer login vai aparecer os dados dele !!
         "/splash": (context) => SplashPage(),
-        "/home": (context) => HomePage(),
-        "/login": (context) => LoginPage(controller: controller,),
+        "/home": (context) => HomePage(
+            user: ModalRoute.of(context)!.settings.arguments as UserModel),
+        "/login": (context) => LoginPage(
+              controller: controller,
+            ),
         "/barcode_scanner": (context) => BarcodeScannerPage(),
-        "/insert_boleto": (context) => InsertBoletoPage(),
+        "/insert_boleto": (context) => InsertBoletoPage(
+              barcode: ModalRoute.of(context) != null
+                  ? ModalRoute.of(context)!.settings.arguments.toString()
+                  : null,
+            )
       },
     );
   }
