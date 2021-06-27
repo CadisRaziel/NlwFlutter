@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:payflow/modules/home/home_controller.dart';
+import 'package:payflow/modules/login/login_controller.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
 import 'package:payflow/shared/themes/app_text_style.dart';
 
@@ -12,9 +13,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = HomeController();
+  final loginController = LoginController();
   final pages = [
-    Container(color: Colors.red,),
-    Container(color: Colors.blue,)
+    Container(
+      color: Colors.red,
+    ),
+    Container(
+      color: Colors.blue,
+    )
   ];
   @override
   Widget build(BuildContext context) {
@@ -27,13 +33,16 @@ class _HomePageState extends State<HomePage> {
           child: Center(
             child: ListTile(
               //Text.rich
-              title: Text.rich(TextSpan(
+              title: Text.rich(
+                TextSpan(
                   text: 'Olá, ',
                   style: TextStyles.titleRegular,
                   children: [
                     TextSpan(
                         text: 'Vitor', style: TextStyles.titleBoldBackground),
-                  ])),
+                  ],
+                ),
+              ),
               subtitle: Text(
                 'Mantenha as suas contas em dia',
                 style: TextStyles.captionShape,
@@ -58,8 +67,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               onPressed: () {
                 controller.setPage(0);
-                setState(() {
-                });
+                setState(() {});
               },
               icon: Icon(
                 Icons.home,
@@ -79,19 +87,26 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(5)),
                 child: Icon(
                   Icons.add_box_outlined,
-                color: AppColors.background,
+                  color: AppColors.background,
                 ),
               ),
             ),
             IconButton(
               onPressed: () {
                 controller.setPage(1);
-                setState(() {
-                  
-                });
+                setState(() {});
               },
               icon: Icon(
                 Icons.description_outlined,
+                color: AppColors.body,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                loginController.googleLogOut(context);
+              },
+              icon: Icon(
+                Icons.logout,
                 color: AppColors.body,
               ),
             ),

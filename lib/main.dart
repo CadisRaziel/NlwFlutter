@@ -1,9 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:payflow/core/App_widget.dart';
 
+
+/* 
+WidgetsFlutterBinding.ensureInitialized(); ->
+Se você estiver executando um aplicativo e precisar acessar o mensageiro binário antes de runApp() 
+ser chamado (por exemplo, durante a inicialização do plug-in),
+será necessário chamar explicitamente o WidgetsFlutterBinding.ensureInitialized()primeiro.
+*/
 void main() {
-  runApp(AppWidget());
+  WidgetsFlutterBinding.ensureInitialized();  
+  runApp(AppFirebase());
 }
 
 ///Classe para inicializar o firebase

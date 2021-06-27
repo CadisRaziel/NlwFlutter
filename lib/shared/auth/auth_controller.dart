@@ -24,7 +24,7 @@ class AuthController {
       _user = user;
       // _isAuthenticated = true;
       ////pushReplacement = para nao ter um icone de voltar !
-      Navigator.pushReplacementNamed(context, "/home");
+      Navigator.pushReplacementNamed(context, "/home", arguments: user);
 
       ///se ele for nulo continua false
     } else {
@@ -58,5 +58,11 @@ class AuthController {
     } else {
       setUser(context, null);
     }
+  }
+
+  ///Implementando logout
+   Future<void> logOut() async {
+    final instance = await SharedPreferences.getInstance();
+    await instance.remove("user");
   }
 }

@@ -1,3 +1,4 @@
+import 'package:animated_card/animated_card.dart';
 import 'package:flutter/material.dart';
 import 'package:payflow/modules/login/login_controller.dart';
 import 'package:payflow/shared/themes/app_colors.dart';
@@ -14,7 +15,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   ///vamos instanciar a classe do LoginController
   final controller = LoginController();
 
@@ -75,16 +75,23 @@ class _LoginPageState extends State<LoginPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 40, right: 40, top: 50),
-                    child: SocialLoginButton(
-                      ///e aqui no evento de clique colocamos a final controller com o metodo criado na classe LoginController
-                      onTap: (){
-                        controller.googleSignIn(context);
-                      },
+
+                  ///AnimatedCard para animar o botão de login do google
+                  ///ao iniciar a tela ele vai ter um efeito de caindo
+                  ///e com isso ele nao vai ser mais aquele botao statico de quando abre a tela ele ta la parado
+                  AnimatedCard(
+                    direction: AnimatedCardDirection.top,
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 40, right: 40, top: 50),
+                      child: SocialLoginButton(
+                        ///e aqui no evento de clique colocamos a final controller com o metodo criado na classe LoginController
+                        onTap: () {
+                          controller.googleSignIn(context);
+                        },
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             )
